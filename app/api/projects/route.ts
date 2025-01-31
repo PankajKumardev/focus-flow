@@ -10,7 +10,6 @@ const ProjectSchema = z.object({
   name: z.string().min(1, 'Project name is required'),
 });
 
-// Fetch projects for the logged-in user
 export async function GET() {
   const session = await getServerSession(NEXT_AUTH);
 
