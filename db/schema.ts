@@ -8,7 +8,6 @@ import {
   boolean,
   date,
   pgEnum,
-  primaryKey,
 } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
@@ -36,7 +35,7 @@ const priorityEnum = pgEnum('priority', ['low', 'medium', 'high']);
 export const tasks = pgTable('tasks', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
-  description: text('description'),
+  descrption: text('description'),
   priority: priorityEnum('priority'),
   dueDate: date('due_date'),
   completed: boolean('completed').default(false),
