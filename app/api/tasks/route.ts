@@ -58,3 +58,56 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export async function PUT(req: Request) {
+  const session = await getServerSession(NEXT_AUTH);
+
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+
+    const validatedTask = TaskSchema.parse(body);
+
+    const updatedTask = await db
+      .update(tasks)
+      .set(validatedTask)
+      .where(eq(tasks.id, Number(session.user.id)))
+      .returning();
+
+    return NextResponse.json(updatedTask);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.errors }, { status: 400 });
+    }
+    return NextResponse.json(
+      { error: 'Something went wrong' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: Request) {
+  const session = await getServerSession(NEXT_AUTH);
+
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+
+    const taskId = Number(body.id);
+
+    await db.delete(tasks).where(eq(tasks.id, taskId));
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Something went wrong' },
+      { status: 500 }
+    );
+  }
+}
