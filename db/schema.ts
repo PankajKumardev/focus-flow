@@ -4,8 +4,6 @@ import {
   varchar,
   integer,
   timestamp,
-  unique,
-  foreignKey,
 } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
@@ -35,10 +33,14 @@ export const tasks = pgTable('tasks', {
     .references(() => users.id)
     .notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  categoryId: integer('category_id').references(() => categories.id),
 });
 
 export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   color: varchar('color', { length: 7 }).notNull(),
+  userId: integer('user_id')
+    .references(() => users.id)
+    .notNull(),
 });
