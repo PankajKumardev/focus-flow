@@ -9,14 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "drizzle-orm": "^0.39.1",
     "next": "15.1.6",
+    "next-auth": "^4.24.11",
     "pg": "^8.13.1",
     "postgres": "^3.4.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/pg": "^8.11.11",
     "@types/react": "^19",
