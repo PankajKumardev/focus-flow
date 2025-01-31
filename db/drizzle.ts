@@ -13,5 +13,4 @@ const dbCredentials = {
 
 const connectionString = `postgres://${dbCredentials.user}:${dbCredentials.password}@${dbCredentials.host}:${dbCredentials.port}/${dbCredentials.database}?ssl=${dbCredentials.ssl}`;
 const client = postgres(connectionString);
-
 export const db = drizzle(client, { schema });
