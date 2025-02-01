@@ -1,5 +1,5 @@
 {
-  "id": "adfea84f-2d8f-45f8-86b3-7830866507e1",
+  "id": "9cdf512e-56c2-4f03-a75b-f2ffe6d255f8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -20,17 +20,11 @@
           "primaryKey": false,
           "notNull": true
         },
-        "color": {
-          "name": "color",
-          "type": "varchar(7)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "user_id": {
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {},
@@ -75,13 +69,13 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
         }
       },
@@ -125,24 +119,39 @@
         },
         "description": {
           "name": "description",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "due_date": {
-          "name": "due_date",
-          "type": "timestamp",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
         "priority": {
           "name": "priority",
-          "type": "integer",
+          "type": "priority",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "'low'"
+        },
+        "due_date": {
+          "name": "due_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "completed": {
+          "name": "completed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         },
         "project_id": {
           "name": "project_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category_id": {
+          "name": "category_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -151,20 +160,14 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
-        },
-        "category_id": {
-          "name": "category_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
@@ -182,12 +185,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "tasks_user_id_users_id_fk": {
-          "name": "tasks_user_id_users_id_fk",
+        "tasks_category_id_categories_id_fk": {
+          "name": "tasks_category_id_categories_id_fk",
           "tableFrom": "tasks",
-          "tableTo": "users",
+          "tableTo": "categories",
           "columnsFrom": [
-            "user_id"
+            "category_id"
           ],
           "columnsTo": [
             "id"
@@ -195,12 +198,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "tasks_category_id_categories_id_fk": {
-          "name": "tasks_category_id_categories_id_fk",
+        "tasks_user_id_users_id_fk": {
+          "name": "tasks_user_id_users_id_fk",
           "tableFrom": "tasks",
-          "tableTo": "categories",
+          "tableTo": "users",
           "columnsFrom": [
-            "category_id"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -235,13 +238,13 @@
           "name": "password",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
         }
       },
@@ -262,7 +265,17 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.priority": {
+      "name": "priority",
+      "schema": "public",
+      "values": [
+        "low",
+        "medium",
+        "high"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

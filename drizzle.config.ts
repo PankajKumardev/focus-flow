@@ -11,6 +11,6 @@ export default {
     user: process.env.DATABASE_USER!,
     password: process.env.DATABASE_PASSWORD!,
     port: Number(process.env.DATABASE_PORT!),
-    ssl: process.env.DATABASE_SSL === 'true', 
+    ssl: process.env.DATABASE_SSL === 'true',
   },
 };
