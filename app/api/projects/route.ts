@@ -1,10 +1,9 @@
 import { db } from '@/db/drizzle';
 import { projects } from '@/db/schema';
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { NEXT_AUTH } from '@/lib/auth';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
+import { getCurrentUser } from '@/lib/session';
 
 const ProjectSchema = z.object({
   id: z.number().optional(),
@@ -12,13 +11,13 @@ const ProjectSchema = z.object({
 });
 
 export async function GET() {
-  const session = await getServerSession(NEXT_AUTH);
+  const user = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const userId = Number(session.user.id);
+  const userId = Number(user.id);
   const userProjects = await db
     .select()
     .from(projects)
@@ -28,9 +27,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const session = await getServerSession(NEXT_AUTH);
+  const user = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -43,7 +42,7 @@ export async function POST(req: Request) {
       .insert(projects)
       .values({
         ...validatedProject,
-        userId: Number(session.user.id),
+        userId: Number(user.id),
       })
       .returning();
 
@@ -60,8 +59,8 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  const session = await getServerSession(NEXT_AUTH);
-  if (!session?.user) {
+  const user = getCurrentUser();
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {
@@ -85,8 +84,8 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const session = await getServerSession(NEXT_AUTH);
-  if (!session?.user) {
+  const user = getCurrentUser();
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {

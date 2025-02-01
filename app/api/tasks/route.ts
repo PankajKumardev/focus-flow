@@ -1,10 +1,10 @@
 import { db } from '@/db/drizzle';
 import { tasks } from '@/db/schema';
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { NEXT_AUTH } from '@/lib/auth';
+
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
+import { getCurrentUser } from '@/lib/session';
 
 const TaskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -15,22 +15,22 @@ const TaskSchema = z.object({
 });
 
 export async function GET() {
-  const session = await getServerSession(NEXT_AUTH);
+  const user = await getCurrentUser();
 
-  if (!session?.user) {
+  if (user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const userId = Number(session.user.id);
+  const userId = Number(user.id);
   const userTasks = await db.select().from(tasks).where(eq(tasks.id, userId));
 
   return NextResponse.json(userTasks);
 }
 
 export async function POST(req: Request) {
-  const session = await getServerSession(NEXT_AUTH);
+  const user = await getCurrentUser();
 
-  if (!session?.user) {
+  if (user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
       .insert(tasks)
       .values({
         ...validatedTask,
-        categoryId: Number(session.user.id),
+        projectId: validatedTask.projectId ?? 0,
       })
       .returning();
 
@@ -60,9 +60,9 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  const session = await getServerSession(NEXT_AUTH);
+  const user = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -74,7 +74,7 @@ export async function PUT(req: Request) {
     const updatedTask = await db
       .update(tasks)
       .set(validatedTask)
-      .where(eq(tasks.id, Number(session.user.id)))
+      .where(eq(tasks.id, Number(user.id)))
       .returning();
 
     return NextResponse.json(updatedTask);
@@ -90,9 +90,9 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const session = await getServerSession(NEXT_AUTH);
+  const user = await getCurrentUser();
 
-  if (!session?.user) {
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
