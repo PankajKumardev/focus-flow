@@ -1,4 +1,3 @@
-// hooks/useTasks.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Task = {

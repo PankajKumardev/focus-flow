@@ -48,7 +48,8 @@ export async function POST(req: Request) {
       .insert(tasks)
       .values({
         ...validatedTask,
-        projectId: validatedTask.projectId ?? 0,
+        userId: Number(user.id),
+        dueDate: validatedTask.dueDate ? new Date(validatedTask.dueDate).toISOString() : null,
       })
       .returning();
 

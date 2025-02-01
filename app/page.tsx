@@ -1,149 +1,250 @@
-import { useEffect } from 'react';
-import { useTaskStore, useProjectStore } from '@/store/useStore';
+'use client';
+
+import React, { useState } from 'react';
 import { useTasks } from '@/hooks/useTasks';
 import { useProjects } from '@/hooks/useProjects';
-import {
-  createTask,
-  createProject,
-  deleteTask,
-  deleteProject,
-} from '@/services/api'; // You'll define these API services
+import { useCategories } from '@/hooks/useCategories';
 
-const Dashboard = () => {
-  const { tasks, setTasks } = useTaskStore();
-  const { projects, setProjects } = useProjectStore();
+export default function TestCRUDPage() {
+  const {
+    tasks,
+    isLoading: tasksLoading,
+    createTask,
+    updateTask,
+    deleteTask,
+  } = useTasks();
 
-  const { data: fetchedTasks, isLoading: isLoadingTasks } = useTasks();
-  const { data: fetchedProjects, isLoading: isLoadingProjects } = useProjects();
+  const {
+    projects,
+    isLoading: projectsLoading,
+    createProject,
+    updateProject,
+    deleteProject,
+  } = useProjects();
 
-  useEffect(() => {
-    if (fetchedTasks) setTasks(fetchedTasks);
-  }, [fetchedTasks, setTasks]);
+  const {
+    categories,
+    isLoading: categoriesLoading,
+    createCategory,
+    updateCategory,
+    deleteCategory,
+  } = useCategories();
 
-  useEffect(() => {
-    if (fetchedProjects) setProjects(fetchedProjects);
-  }, [fetchedProjects, setProjects]);
+  // Local form states
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [newProjectName, setNewProjectName] = useState('');
+  const [newCategoryName, setNewCategoryName] = useState('');
 
-  const handleTaskSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.target as HTMLFormElement;
-    const title = form.title.value;
-    const description = form.description.value;
-    const priority = form.priority.value;
-    const projectId = form.projectId.value;
-
-    const newTask = {
-      title,
-      description,
-      priority,
-      projectId: Number(projectId),
-    };
-
-    await createTask(newTask);
+  // Example create task
+  const handleCreateTask = async () => {
+    if (!newTaskTitle) return;
+    try {
+      await createTask({ title: newTaskTitle, priority: 'low' });
+      setNewTaskTitle('');
+    } catch (error) {
+      console.error('Error creating task:', error);
+    }
   };
 
-  const handleProjectSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    const form = event.target as HTMLFormElement;
-    const name = form.name.value;
-
-    const newProject = { name };
-    await createProject(newProject);
+  // Example update task
+  const handleUpdateTask = async (id: number) => {
+    try {
+      await updateTask({ id, title: 'Updated Task Title' });
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
   };
 
-  if (isLoadingTasks || isLoadingProjects) return <div>Loading...</div>;
+  // Example delete task
+  const handleDeleteTask = async (id: number) => {
+    try {
+      await deleteTask(id);
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  };
+
+  // Example create project
+  const handleCreateProject = async () => {
+    if (!newProjectName) return;
+    try {
+      await createProject({ name: newProjectName });
+      setNewProjectName('');
+    } catch (error) {
+      console.error('Error creating project:', error);
+    }
+  };
+
+  // Example update project
+  const handleUpdateProject = async (id: number) => {
+    try {
+      await updateProject({ id, name: 'Updated Project Name' });
+    } catch (error) {
+      console.error('Error updating project:', error);
+    }
+  };
+
+  // Example delete project
+  const handleDeleteProject = async (id: number) => {
+    try {
+      await deleteProject(id);
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    }
+  };
+
+  // Example create category
+  const handleCreateCategory = async () => {
+    if (!newCategoryName) return;
+    try {
+      await createCategory({ name: newCategoryName });
+      setNewCategoryName('');
+    } catch (error) {
+      console.error('Error creating category:', error);
+    }
+  };
+
+  // Example update category
+  const handleUpdateCategory = async (id: number) => {
+    try {
+      await updateCategory({ id, name: 'Updated Category Name' });
+    } catch (error) {
+      console.error('Error updating category:', error);
+    }
+  };
+
+  // Example delete category
+  const handleDeleteCategory = async (id: number) => {
+    try {
+      await deleteCategory(id);
+    } catch (error) {
+      console.error('Error deleting category:', error);
+    }
+  };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      <div className="grid grid-cols-2 gap-4">
-        {/* Task List */}
-        <div>
-          <h2 className="text-xl font-semibold">Tasks</h2>
-          <ul className="space-y-2">
-            {tasks.map((task) => (
-              <li key={task.id} className="p-2 border rounded">
-                <div>
-                  <strong>{task.title}</strong> - {task.description}
-                </div>
-                <div>Priority: {task.priority}</div>
-                <button
-                  className="text-red-500"
-                  onClick={() => deleteTask(task.id)}
-                >
-                  Delete Task
-                </button>
-              </li>
-            ))}
-          </ul>
-          <form onSubmit={handleTaskSubmit} className="mt-4 space-y-2">
-            <h3>Add New Task</h3>
-            <input
-              type="text"
-              name="title"
-              placeholder="Title"
-              className="border p-2 w-full"
-              required
-            />
-            <input
-              type="text"
-              name="description"
-              placeholder="Description"
-              className="border p-2 w-full"
-            />
-            <select name="priority" className="border p-2 w-full">
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-            <select name="projectId" className="border p-2 w-full">
-              {projects.map((project) => (
-                <option key={project.id} value={project.id}>
-                  {project.name}
-                </option>
-              ))}
-            </select>
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2">
-              Add Task
-            </button>
-          </form>
-        </div>
+    <div style={{ padding: '1rem' }}>
+      <h1>Test CRUD Page</h1>
 
-        {/* Project List */}
-        <div>
-          <h2 className="text-xl font-semibold">Projects</h2>
-          <ul className="space-y-2">
-            {projects.map((project) => (
-              <li key={project.id} className="p-2 border rounded">
-                <div>{project.name}</div>
+      {/* Tasks Section */}
+      <section style={{ marginBottom: '2rem' }}>
+        <h2>Tasks</h2>
+        {tasksLoading && <p>Loading tasks...</p>}
+        {tasks && (
+          <ul>
+            {tasks.map((task) => (
+              <li key={task.id}>
+                {task.title} (ID: {task.id})
                 <button
-                  className="text-red-500"
-                  onClick={() => deleteProject(project.id)}
+                  onClick={() => handleUpdateTask(task.id)}
+                  style={{ marginLeft: '1rem' }}
                 >
-                  Delete Project
+                  Update
+                </button>
+                <button
+                  onClick={() => handleDeleteTask(task.id)}
+                  style={{ marginLeft: '0.5rem' }}
+                >
+                  Delete
                 </button>
               </li>
             ))}
           </ul>
-          <form onSubmit={handleProjectSubmit} className="mt-4 space-y-2">
-            <h3>Add New Project</h3>
-            <input
-              type="text"
-              name="name"
-              placeholder="Project Name"
-              className="border p-2 w-full"
-              required
-            />
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2">
-              Add Project
-            </button>
-          </form>
+        )}
+        <div style={{ marginTop: '1rem' }}>
+          <input
+            type="text"
+            placeholder="New task title"
+            value={newTaskTitle}
+            onChange={(e) => setNewTaskTitle(e.target.value)}
+          />
+          <button onClick={handleCreateTask} style={{ marginLeft: '0.5rem' }}>
+            Create Task
+          </button>
         </div>
-      </div>
+      </section>
+
+      {/* Projects Section */}
+      <section style={{ marginBottom: '2rem' }}>
+        <h2>Projects</h2>
+        {projectsLoading && <p>Loading projects...</p>}
+        {projects && (
+          <ul>
+            {projects.map((project) => (
+              <li key={project.id}>
+                {project.name} (ID: {project.id})
+                <button
+                  onClick={() => handleUpdateProject(project.id)}
+                  style={{ marginLeft: '1rem' }}
+                >
+                  Update
+                </button>
+                <button
+                  onClick={() => handleDeleteProject(project.id)}
+                  style={{ marginLeft: '0.5rem' }}
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div style={{ marginTop: '1rem' }}>
+          <input
+            type="text"
+            placeholder="New project name"
+            value={newProjectName}
+            onChange={(e) => setNewProjectName(e.target.value)}
+          />
+          <button
+            onClick={handleCreateProject}
+            style={{ marginLeft: '0.5rem' }}
+          >
+            Create Project
+          </button>
+        </div>
+      </section>
+
+      {/* Categories Section */}
+      <section style={{ marginBottom: '2rem' }}>
+        <h2>Categories</h2>
+        {categoriesLoading && <p>Loading categories...</p>}
+        {categories && (
+          <ul>
+            {categories.map((category) => (
+              <li key={category.id}>
+                {category.name} (ID: {category.id})
+                <button
+                  onClick={() => handleUpdateCategory(category.id)}
+                  style={{ marginLeft: '1rem' }}
+                >
+                  Update
+                </button>
+                <button
+                  onClick={() => handleDeleteCategory(category.id)}
+                  style={{ marginLeft: '0.5rem' }}
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div style={{ marginTop: '1rem' }}>
+          <input
+            type="text"
+            placeholder="New category name"
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+          />
+          <button
+            onClick={handleCreateCategory}
+            style={{ marginLeft: '0.5rem' }}
+          >
+            Create Category
+          </button>
+        </div>
+      </section>
     </div>
   );
-};
-
-export default Dashboard;
+}
