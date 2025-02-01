@@ -11,7 +11,7 @@ type Task = {
 };
 
 const fetchTasks = async (): Promise<Task[]> => {
-  const response = await fetch('/api/tasks');
+  const response = await fetch('/api/tasks', { credentials: 'include' });
   if (!response.ok) {
     throw new Error('Failed to fetch tasks');
   }
