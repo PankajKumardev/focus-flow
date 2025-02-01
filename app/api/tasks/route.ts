@@ -26,7 +26,7 @@ export async function GET() {
   const userTasks = await db
     .select()
     .from(tasks)
-    .where(eq(tasks.projectId, userId)); // assuming tasks.projectId is related to user's projects
+    .where(eq(tasks.userId, userId));
 
   return NextResponse.json(userTasks);
 }
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       .insert(tasks)
       .values({
         ...validatedTask,
-        projectId: validatedTask.projectId ?? 0, 
+        projectId: validatedTask.projectId ?? 0,
       })
       .returning();
 
@@ -87,7 +87,7 @@ export async function PUT(req: Request) {
       .update(tasks)
       .set({
         title: validatedTask.title,
-        descrption: validatedTask.description,
+        description: validatedTask.description,
         dueDate: validatedTask.dueDate,
         priority: validatedTask.priority,
         projectId: validatedTask.projectId,

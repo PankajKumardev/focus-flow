@@ -30,13 +30,12 @@ export const categories = pgTable('categories', {
   userId: integer('user_id').references(() => users.id),
 });
 
-
 export const priorityEnum = pgEnum('priority', ['low', 'medium', 'high']);
 
 export const tasks = pgTable('tasks', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
-  descrption: text('description'),
+  description: text('description'),
   priority: priorityEnum().default('low'),
   dueDate: date('due_date'),
   completed: boolean('completed').default(false),
