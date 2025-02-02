@@ -24,9 +24,11 @@ export const projects = pgTable('projects', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
+export const categoryEnum = pgEnum('category', ['work', 'personal', 'hobby']);
+
 export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
-  name: varchar('name', { length: 255 }).notNull(),
+  name: categoryEnum().notNull(),
   userId: integer('user_id').references(() => users.id),
 });
 
@@ -43,4 +45,6 @@ export const tasks = pgTable('tasks', {
   categoryId: integer('category_id').references(() => categories.id),
   userId: integer('user_id').references(() => users.id),
   createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+  category: categoryEnum().notNull(),
 });
