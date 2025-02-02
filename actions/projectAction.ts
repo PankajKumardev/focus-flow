@@ -2,7 +2,7 @@
 import { db } from '@/db/drizzle';
 import { projects } from '@/db/schema';
 import { getCurrentUser } from '@/lib/session';
-import { and, asc, eq, inArray, not } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 
 interface NewProject {
   name: string;
