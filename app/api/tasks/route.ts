@@ -11,7 +11,9 @@ const TaskSchema = z.object({
   description: z.string().optional(),
   dueDate: z.string().optional(),
   priority: z.enum(['low', 'medium', 'high']),
-  projectId: z.number().optional(),
+  projectId: z.number(),
+  categoryId: z.number(),
+  userId: z.number(),
 });
 
 export async function GET() {
@@ -47,9 +49,15 @@ export async function POST(req: Request) {
     const newTask = await db
       .insert(tasks)
       .values({
-        ...validatedTask,
+        title: validatedTask.title,
+        description: validatedTask.description,
+        dueDate: validatedTask.dueDate
+          ? new Date(validatedTask.dueDate).toISOString()
+          : null,
+        priority: validatedTask.priority,
+        projectId: validatedTask.projectId,
+        categoryId: validatedTask.categoryId,
         userId: Number(user.id),
-        dueDate: validatedTask.dueDate ? new Date(validatedTask.dueDate).toISOString() : null,
       })
       .returning();
 
