@@ -29,6 +29,7 @@ export const createTask = async (task: NewTask) => {
     createdAt: new Date(),
     updatedAt: new Date(),
   });
+  return task;
 };
 
 export const getTasks = async () => {

@@ -21,7 +21,7 @@ export const createProject = async (project: NewProject) => {
   });
 };
 
-export const getProjects = async () => {
+export const getProjects = async (): Promise<NewProject[]> => {
   const user = await getCurrentUser();
   if (!user) {
     throw new Error('Unauthorized');
@@ -31,6 +31,10 @@ export const getProjects = async () => {
     .from(projects)
     .where(eq(projects.userId, user.id))
     .orderBy(asc(projects.id));
+  return data.map((project) => ({
+    name: project.name,
+    createdAt: project.createdAt || new Date(),
+  }));
 };
 
 export const deleteProject = async (projectId: number) => {
