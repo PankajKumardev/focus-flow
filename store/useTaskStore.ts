@@ -1,3 +1,4 @@
+// stores/taskStore.ts
 import { create } from 'zustand';
 import {
   createTask,
@@ -7,6 +8,7 @@ import {
   toggleTask,
 } from '@/actions/taskActions';
 
+// Define Zustand store for tasks
 interface TaskState {
   tasks: any[];
   loading: boolean;
@@ -23,6 +25,7 @@ export const useTaskStore = create<TaskState>((set) => ({
   loading: false,
   error: null,
 
+
   fetchTasks: async () => {
     set({ loading: true });
     try {
@@ -33,16 +36,18 @@ export const useTaskStore = create<TaskState>((set) => ({
     }
   },
 
+
   addTask: async (task) => {
     set({ loading: true });
     try {
       await createTask(task);
-      await useTaskStore.getState().fetchTasks();
+      await useTaskStore.getState().fetchTasks(); 
       set({ loading: false });
     } catch (error) {
       set({ error: 'Failed to create task', loading: false });
     }
   },
+
 
   editTask: async (task) => {
     set({ loading: true });
@@ -59,18 +64,19 @@ export const useTaskStore = create<TaskState>((set) => ({
     set({ loading: true });
     try {
       await deleteTask(taskId);
-      await useTaskStore.getState().fetchTasks();
+      await useTaskStore.getState().fetchTasks(); 
       set({ loading: false });
     } catch (error) {
       set({ error: 'Failed to delete task', loading: false });
     }
   },
 
+
   toggleTaskCompletion: async (taskId) => {
     set({ loading: true });
     try {
       await toggleTask(taskId);
-      await useTaskStore.getState().fetchTasks();
+      await useTaskStore.getState().fetchTasks(); 
       set({ loading: false });
     } catch (error) {
       set({ error: 'Failed to toggle task', loading: false });

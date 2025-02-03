@@ -42,7 +42,6 @@ export const tasks = pgTable('tasks', {
   dueDate: date('due_date'),
   completed: boolean('completed').default(false),
   projectId: integer('project_id').references(() => projects.id),
-  categoryId: integer('category_id').references(() => categories.id),
   userId: integer('user_id').references(() => users.id),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

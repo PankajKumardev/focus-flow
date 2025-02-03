@@ -9,27 +9,21 @@ import { revalidatePath } from 'next/cache';
 interface NewTask {
   title: string;
   description: string;
-  completed: boolean;
   priority: 'low' | 'medium' | 'high';
   dueDate: string;
   projectId: number;
-  categoryId: number;
   category: 'work' | 'personal' | 'hobby';
 }
-
 export const createTask = async (task: NewTask) => {
   const user = await getCurrentUser();
-  if (!user) {
-    throw new Error('Unauthorized');
-  }
+  if (!user) throw new Error('Unauthorized');
 
   await db.insert(tasks).values({
     ...task,
+    dueDate: task.dueDate,
     userId: user.id,
-    createdAt: new Date(),
-    updatedAt: new Date(),
   });
-  return task;
+  revalidatePath('/dashboard');
 };
 
 export const getTasks = async () => {
