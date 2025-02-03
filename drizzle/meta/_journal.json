@@ -15,6 +15,13 @@
       "when": 1738478481390,
       "tag": "0001_abandoned_lilith",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1738600858688,
+      "tag": "0002_minor_the_initiative",
+      "breakpoints": true
     }
   ]
 }

@@ -11,7 +11,7 @@ interface NewTask {
   description: string;
   priority: 'low' | 'medium' | 'high';
   dueDate: string;
-  projectId: number;
+  projectId?: number;
   category: 'work' | 'personal' | 'hobby';
 }
 export const createTask = async (task: NewTask) => {
@@ -20,6 +20,7 @@ export const createTask = async (task: NewTask) => {
 
   await db.insert(tasks).values({
     ...task,
+    projectId: task.projectId || null,
     dueDate: task.dueDate,
     userId: user.id,
   });
