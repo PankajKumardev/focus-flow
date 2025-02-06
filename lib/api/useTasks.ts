@@ -24,7 +24,7 @@ export const useTasks = () => {
   return useQuery<Task[], Error>({
     queryKey: ['tasks'],
     queryFn: fetchTasks,
-    staleTime: 1000 * 60 * 5,
-    retry: 1,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 1, // retry once
   });
 };

@@ -45,5 +45,5 @@ export const tasks = pgTable('tasks', {
   userId: integer('user_id').references(() => users.id),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
-  category: categoryEnum().notNull(),
+  category: categoryEnum().notNull()
 });
